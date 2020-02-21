@@ -31,7 +31,7 @@ class VideoReaderPipeline(Pipeline):
         return output, input[1], input[2], crop_pos_x, crop_pos_y, is_flipped
 
 class DALILoader():
-    def __init__(self, batch_size, file_list, uid2label, sequence_length, crop_size):
+    def __init__(self, batch_size, file_list, sequence_length, crop_size):
         self.pipeline = VideoReaderPipeline(batch_size=batch_size,
                                             sequence_length=sequence_length,
                                             num_threads=2,
@@ -40,7 +40,6 @@ class DALILoader():
                                             crop_size=crop_size)
         self.pipeline.build()
 
-        self.uid2label = uid2label
         self.epoch_size = self.pipeline.epoch_size("Reader")
         self.dali_iterator = pytorch.DALIGenericIterator(self.pipeline,
                                                          ["data", "label", "frame_num", "crop_pos_x", "crop_pos_y", "is_flipped"],
@@ -58,7 +57,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--file_list', type=str, default='file_list.txt',
+    parser.add_argument('--file_list', type=str, default='file_lists/file_label_list.txt',
                         help='DALI file_list for VideoReader')
     parser.add_argument('--frames', type=int, default = 16,
                         help='num frames in input sequence')
@@ -78,10 +77,14 @@ if __name__ == "__main__":
 
     batch = next(loader)
 
-    print(batch['data'].shape)
-    print(batch['uid'])
+    print('input shape: %s' % (batch['data'].shape,))
+    print('labels:')
     print(batch['label'])
+    print('frame nums:')
     print(batch['frame_num'])
+    print('x crop pos:')
     print(batch['crop_pos_x'])
+    print('y crop pos:')
     print(batch['crop_pos_y'])
+    print('is flipped:')
     print(batch['is_flipped'])

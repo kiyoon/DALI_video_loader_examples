@@ -61,7 +61,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--file_list', type=str, default='file_list.txt',
+    parser.add_argument('--file_list', type=str, default='file_lists/file_uid_list.txt',
                         help='DALI file_list for VideoReader')
     parser.add_argument('--frames', type=int, default = 16,
                         help='num frames in input sequence')
@@ -72,7 +72,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    uid2label = {35598:100, 34186:101}
+    uid2label = {31960:2, 31961:0, 31962:3, 31963:1, 31964:0,
+            31965:1, 31966:2, 31967:0, 31968:3, 31969:1}
     loader = DALILoader(args.batchsize,
                 args.file_list,
                 uid2label,
@@ -83,10 +84,16 @@ if __name__ == "__main__":
 
     batch = next(loader)
 
-    print(batch['data'].shape)
+    print('input shape: %s' % (batch['data'].shape,))
+    print('video uids:')
     print(batch['uid'])
+    print('labels:')
     print(batch['label'])
+    print('frame nums:')
     print(batch['frame_num'])
+    print('x crop pos:')
     print(batch['crop_pos_x'])
+    print('y crop pos:')
     print(batch['crop_pos_y'])
+    print('is flipped:')
     print(batch['is_flipped'])
