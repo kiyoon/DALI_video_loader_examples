@@ -50,7 +50,13 @@ class DALILoader():
     def __iter__(self):
         return self
     def __next__(self):
-        return self.dali_iterator.__next__()[0]
+        batch = self.dali_iterator.__next__()[0]
+        batch['label'] = batch['label'].view(-1).to(torch.long)
+        batch['frame_num'] = batch['frame_num'].view(-1)
+        batch['crop_pos_x'] = batch['crop_pos_x'].view(-1)
+        batch['crop_pos_y'] = batch['crop_pos_y'].view(-1)
+        batch['is_flipped'] = batch['is_flipped'].view(-1)
+        return batch
 
 
 if __name__ == "__main__":
@@ -78,13 +84,8 @@ if __name__ == "__main__":
     batch = next(loader)
 
     print('input shape: %s' % (batch['data'].shape,))
-    print('labels:')
-    print(batch['label'])
-    print('frame nums:')
-    print(batch['frame_num'])
-    print('x crop pos:')
-    print(batch['crop_pos_x'])
-    print('y crop pos:')
-    print(batch['crop_pos_y'])
-    print('is flipped:')
-    print(batch['is_flipped'])
+    print('labels: %s' % batch['label'])
+    print('frame nums: %s' % batch['frame_num'])
+    print('x crop pos: %s' % batch['crop_pos_x'])
+    print('y crop pos: %s' % batch['crop_pos_y'])
+    print('is flipped: %s' % batch['is_flipped'])

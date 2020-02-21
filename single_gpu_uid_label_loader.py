@@ -52,7 +52,11 @@ class DALILoader():
         return self
     def __next__(self):
         batch = self.dali_iterator.__next__()[0]
-        batch['label'] = torch.from_numpy(np.fromiter((self.uid2label[int(uid)] for uid in batch['uid']), int).reshape(batch['uid'].shape)).int().to(batch['uid'].device)
+        batch['label'] = torch.from_numpy(np.fromiter((self.uid2label[int(uid)] for uid in batch['uid']), int)).long().to(batch['uid'].device)
+        batch['frame_num'] = batch['frame_num'].view(-1)
+        batch['crop_pos_x'] = batch['crop_pos_x'].view(-1)
+        batch['crop_pos_y'] = batch['crop_pos_y'].view(-1)
+        batch['is_flipped'] = batch['is_flipped'].view(-1)
         return batch
 
 
@@ -84,15 +88,9 @@ if __name__ == "__main__":
     batch = next(loader)
 
     print('input shape: %s' % (batch['data'].shape,))
-    print('video uids:')
-    print(batch['uid'])
-    print('labels:')
-    print(batch['label'])
-    print('frame nums:')
-    print(batch['frame_num'])
-    print('x crop pos:')
-    print(batch['crop_pos_x'])
-    print('y crop pos:')
-    print(batch['crop_pos_y'])
-    print('is flipped:')
-    print(batch['is_flipped'])
+    print('video uids: %s' % batch['uid'])
+    print('labels: %s' % batch['label'])
+    print('frame nums: %s' % batch['frame_num'])
+    print('x crop pos: %s' % batch['crop_pos_x'])
+    print('y crop pos: %s' % batch['crop_pos_y'])
+    print('is flipped: %s' % batch['is_flipped'])
