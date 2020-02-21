@@ -2,8 +2,8 @@
 
 # Requirements
 
-nvidia-dali >= 0.18
-pytorch
+nvidia-dali >= 0.18  
+pytorch >= 0.4.0
 
 # Usage
 
