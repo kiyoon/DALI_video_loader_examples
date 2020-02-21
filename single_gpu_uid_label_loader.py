@@ -51,10 +51,9 @@ class DALILoader():
     def __iter__(self):
         return self
     def __next__(self):
-        batch = self.dali_iterator.__next__()
-        uids = batch[0]['uid'].to('cpu').data.numpy()
-        batch[0]['label'] = torch.from_numpy(np.fromiter((self.uid2label[int(uid)] for uid in uids), int).reshape(uids.shape)).int().to(batch[0]['uid'].device)
-        return batch[0]
+        batch = self.dali_iterator.__next__()[0]
+        batch['label'] = torch.from_numpy(np.fromiter((self.uid2label[int(uid)] for uid in batch['uid']), int).reshape(batch['uid'].shape)).int().to(batch['uid'].device)
+        return batch
 
 
 if __name__ == "__main__":
