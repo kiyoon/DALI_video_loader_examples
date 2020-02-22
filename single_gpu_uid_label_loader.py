@@ -53,10 +53,12 @@ class DALILoader():
     def __next__(self):
         batch = self.dali_iterator.__next__()[0]
         batch['label'] = torch.from_numpy(np.fromiter((self.uid2label[int(uid)] for uid in batch['uid']), int)).long().to(batch['uid'].device)
-        batch['frame_num'] = batch['frame_num'].view(-1)
-        batch['crop_pos_x'] = batch['crop_pos_x'].view(-1)
-        batch['crop_pos_y'] = batch['crop_pos_y'].view(-1)
-        batch['is_flipped'] = batch['is_flipped'].view(-1)
+        # DALI uses the same buffer so you can't change the shape directly. You must copy them.
+        batch['uid'] = batch['uid'].clone().view(-1)
+        batch['frame_num'] = batch['frame_num'].clone().view(-1)
+        batch['crop_pos_x'] = batch['crop_pos_x'].clone().view(-1)
+        batch['crop_pos_y'] = batch['crop_pos_y'].clone().view(-1)
+        batch['is_flipped'] = batch['is_flipped'].clone().view(-1)
         return batch
 
 
